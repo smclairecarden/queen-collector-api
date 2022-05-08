@@ -27,3 +27,19 @@ def show(id):
   queen = Queen.query.filter_by(id=id).first()
   queen_data = queen.serialize()
   return jsonify(queen=queen_data), 200
+
+@queens.route('/<id>', methods=["PUT"]) 
+@login_required
+def update(id):
+  data = request.get_json()
+  profile = read_token(request)
+  queen = Queen.query.filter_by(id=id).first()
+
+  if queen.profile_id != profile["id"]:
+    return 'Forbidden', 403
+
+  for key in data:
+    setattr(queen, key, data[key])
+
+  db.session.commit()
+  return jsonify(queen.serialize()), 200
