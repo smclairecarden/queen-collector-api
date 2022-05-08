@@ -16,3 +16,8 @@ def create():
   db.session.add(queen)
   db.session.commit()
   return jsonify(queen.serialize()), 201
+
+@queens.route('/', methods=["GET"])
+def index():
+  queens = Queen.query.all()
+  return jsonify([queen.serialize() for queen in queens]), 200
