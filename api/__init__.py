@@ -11,6 +11,7 @@ from api.models.queen import Queen
 
 # ============ Import Views ============
 from api.views.auth import auth
+from api.views.queens import queens
 
 cors = CORS()
 migrate = Migrate() 
@@ -26,6 +27,7 @@ def create_app(config):
 
   # ============ Register Blueprints ============
   app.register_blueprint(auth, url_prefix='/api/auth') 
+  app.register_blueprint(queens, url_prefix='/api/queens')
 
   return app
 
