@@ -43,3 +43,16 @@ def update(id):
 
   db.session.commit()
   return jsonify(queen.serialize()), 200
+
+@queens.route('/<id>', methods=["DELETE"]) 
+@login_required
+def delete(id):
+  profile = read_token(request)
+  queen = Queen.query.filter_by(id=id).first()
+
+  if queen.profile_id != profile["id"]:
+    return 'Forbidden', 403
+
+  db.session.delete(queen)
+  db.session.commit()
+  return jsonify(message="Success"), 200
