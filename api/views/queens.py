@@ -21,3 +21,9 @@ def create():
 def index():
   queens = Queen.query.all()
   return jsonify([queen.serialize() for queen in queens]), 200
+
+@queens.route('/<id>', methods=["GET"])
+def show(id):
+  queen = Queen.query.filter_by(id=id).first()
+  queen_data = queen.serialize()
+  return jsonify(queen=queen_data), 200
