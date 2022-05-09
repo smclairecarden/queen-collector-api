@@ -44,3 +44,16 @@ def update(id):
 
   db.session.commit()
   return jsonify(show.serialize()), 200
+
+@shows.route('/<id>', methods=["DELETE"]) 
+@login_required
+def delete(id):
+  profile = read_token(request)
+  show = Show.query.filter_by(id=id).first()
+
+  if show.profile_id != profile["id"]:
+    return 'Forbidden', 403
+    
+  db.session.delete(show)
+  db.session.commit()
+  return jsonify(message="Success"), 200
