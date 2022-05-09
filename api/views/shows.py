@@ -28,3 +28,19 @@ def index():
 def show(id):
   show = Show.query.filter_by(id=id).first()
   return jsonify(show.serialize()), 200
+
+@shows.route('/<id>', methods=["PUT"]) 
+@login_required
+def update(id):
+  data = request.get_json()
+  profile = read_token(request)
+  show = Show.query.filter_by(id=id).first()
+
+  if show.profile_id != profile["id"]:
+    return 'Forbidden', 403
+
+  for key in data:
+    setattr(show, key, data[key])
+
+  db.session.commit()
+  return jsonify(show.serialize()), 200
