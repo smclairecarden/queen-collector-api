@@ -18,3 +18,13 @@ def create():
   db.session.add(show)
   db.session.commit()
   return jsonify(show.serialize()), 201
+
+@shows.route('/', methods=["GET"])
+def index():
+  shows = Show.query.all()
+  return jsonify([show.serialize() for show in shows]), 201
+
+@shows.route('/<id>', methods=["GET"])
+def show(id):
+  show = Show.query.filter_by(id=id).first()
+  return jsonify(show.serialize()), 200
