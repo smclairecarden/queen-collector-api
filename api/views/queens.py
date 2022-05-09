@@ -3,6 +3,8 @@ from api.middleware import login_required, read_token
 
 from api.models.db import db
 from api.models.queen import Queen
+from api.models.read import Read
+
 
 queens = Blueprint('queens', 'queens')
 
@@ -56,3 +58,21 @@ def delete(id):
   db.session.delete(queen)
   db.session.commit()
   return jsonify(message="Success"), 200
+
+@queens.route('/<id>/reads', methods=["POST"]) 
+@login_required
+def add_feeding(id):
+  data = request.get_json()
+  data["queen_id"] = id
+
+  profile = read_token(request)
+  queen = Queen.query.filter_by(id=id).first()
+
+  read = Read(**data)
+  
+  db.session.add(read)
+  db.session.commit()
+
+  queen_data = queen.serialize()
+
+  return jsonify(queen_data), 201
