@@ -1,6 +1,14 @@
 from datetime import datetime
 from api.models.db import db
 
+
+class Association(db.Model):
+    __tablename__ = 'associations'
+    id = db.Column(db.Integer, primary_key=True)
+    queen_id = db.Column(db.Integer, db.ForeignKey('queens.id', ondelete='cascade'))
+    show_id = db.Column(db.Integer, db.ForeignKey('shows.id', ondelete='cascade'))
+
+
 class Show(db.Model):
     __tablename__ = 'shows'
     id = db.Column(db.Integer, primary_key=True)

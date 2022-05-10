@@ -11,12 +11,15 @@ class Queen(db.Model):
     profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'))
 
     reads = db.relationship("Read", cascade='all')
+    shows = db.relationship("Show", secondary="associations")
 
     def __repr__(self):
       return f"Queen('{self.id}', '{self.name}'"
 
     def serialize(self):
       queen = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-      reads = [read.serialize() for read in self.reads] 
+      reads = [read.serialize() for read in self.reads]
+      shows = [show.serialize() for show in self.shows]
       queen['reads'] = reads
+      queen['shows'] = shows
       return queen

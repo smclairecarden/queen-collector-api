@@ -10,6 +10,8 @@ from api.models.profile import Profile
 from api.models.queen import Queen
 from api.models.show import Show
 from api.models.read import Read
+from api.models.show import Association
+
 
 # ============ Import Views ============
 from api.views.auth import auth
