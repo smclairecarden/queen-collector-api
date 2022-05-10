@@ -4,7 +4,8 @@ from api.middleware import login_required, read_token
 from api.models.db import db
 from api.models.queen import Queen
 from api.models.read import Read
-
+from api.models.show import Show
+from api.models.show import Association
 
 queens = Blueprint('queens', 'queens')
 
@@ -28,7 +29,9 @@ def index():
 def show(id):
   queen = Queen.query.filter_by(id=id).first()
   queen_data = queen.serialize()
-  return jsonify(queen=queen_data), 200
+  shows = Show.query.filter(Show.id.notin_([show.id for show in queen.shows])).all()
+  shows=[show.serialize() for show in shows]
+  return jsonify(queen=queen_data, available_shows=shows), 200
 
 @queens.route('/<id>', methods=["PUT"]) 
 @login_required
@@ -76,3 +79,23 @@ def add_feeding(id):
   queen_data = queen.serialize()
 
   return jsonify(queen_data), 201
+
+
+@queens.route('/<queen_id>/shows/<show_id>', methods=["LINK"]) 
+@login_required
+def assoc_toy(queen_id, show_id):
+  data = { "queen_id": queen_id, "show_id": show_id }
+
+  profile = read_token(request)
+  queen = Queen.query.filter_by(id=queen_id).first()
+
+  assoc = Association(**data)
+  db.session.add(assoc)
+  db.session.commit()
+
+  queen = Queen.query.filter_by(id=queen_id).first()
+  return jsonify(queen.serialize()), 201
+
+@queens.errorhandler(Exception)          
+def basic_error(err):
+  return jsonify(err=str(err)), 500
